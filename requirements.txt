@@ -1,2 +1,4 @@
 matplotlib
 plotly_express
+datetime
+streamlit
