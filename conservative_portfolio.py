@@ -82,7 +82,7 @@ st.markdown("""
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Introduction", "Steps 1-3", "Steps 4-6", "Step 7", "Yield Curves"])
+page = st.sidebar.radio("Go to", ["Introduction", "Steps", "Sample Portfolio", "Yield Curves"])
 
 # Main content
 st.title("Conservative Portfolio Selection")
@@ -92,7 +92,7 @@ if page == "Introduction":
    # st.image("https://example.com/conservative_portfolio_image.jpg", caption="Conservative Portfolio Strategy")
     st.write("Welcome to our guide on creating a conservative investment portfolio. This application will walk you through the key steps and considerations for building a portfolio designed for stability and steady growth.")
 
-elif page == "Steps 1-3":
+elif page == "Steps":
     st.header("Step 1: Evaluate Inflation – \"Don't Fight the Fed\"")
     with st.expander("Read more about evaluating inflation"):
         st.write("""
@@ -172,7 +172,6 @@ elif page == "Steps 1-3":
         increasing exposure to short-term bonds or cash equivalents.
         """)
 
-elif page == "Steps 4-6":
     st.header("Step 4: Determine Stock to Bond Allocation")
     with st.expander("Read more about stock to bond allocation"):
         st.write("""
@@ -239,8 +238,8 @@ elif page == "Steps 4-6":
         downturns.
         """)
 
-elif page == "Step 7":
-    st.header("Step 7: Select Stocks and Bonds for the Portfolio")
+elif page == "Sample Portfolio":
+    st.header("Select Stocks and Bonds for the Portfolio")
     with st.expander("Read more about selecting stocks and bonds"):
         st.write("""
         The final step involves selecting specific stocks and bonds that align with your conservative
