@@ -58,7 +58,7 @@ charts_data = [
 
 # Streamlit app setup with improved UI
 st.set_page_config(page_title="Conservative Portfolio Guide", page_icon="📊", layout="wide")
-st.image("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.thrivingam.com%2F&psig=AOvVaw2qkUVVIaoboo55aThhR8Jv&ust=1720047133852000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCICC5oS5iYcDFQAAAAAdAAAAABAE", use_column_width=True)
+st.image("https://static.fmgsuite.com/media/TransparentLogo/variantSize/371c01f4-c955-468a-82d1-76ffe98e899d.png", use_column_width=True)
 
 # Custom CSS to improve the look and feel
 st.markdown("""
