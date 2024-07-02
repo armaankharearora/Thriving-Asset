@@ -58,6 +58,7 @@ charts_data = [
 
 # Streamlit app setup with improved UI
 st.set_page_config(page_title="Conservative Portfolio Guide", page_icon="📊", layout="wide")
+st.image("TAM_logo.png", use_column_width=True)
 
 # Custom CSS to improve the look and feel
 st.markdown("""
@@ -88,8 +89,8 @@ page = st.sidebar.radio("Go to", ["Introduction", "Steps", "Sample Portfolio", "
 st.title("Conservative Portfolio Selection")
 
 if page == "Introduction":
+   # st.image("TAM_logo.png")
     st.write("### Creating a Conservative Portfolio: A Step-by-Step Guide")
-   # st.image("https://example.com/conservative_portfolio_image.jpg", caption="Conservative Portfolio Strategy")
     st.write("Welcome to our guide on creating a conservative investment portfolio. This application will walk you through the key steps and considerations for building a portfolio designed for stability and steady growth.")
 
 elif page == "Steps":
@@ -186,7 +187,7 @@ elif page == "Steps":
           might offer lower yields, leading to a potential shift towards dividend-paying stocks or
           alternative income-generating assets.
         - Diversify within asset classes. For example, within the stock allocation, include a mix of
-          large-cap, mid-cap, and international stocks. For bonds, consider a mix of government,
+          large-cap, mid-cap, and multinational stocks. For bonds, consider a mix of government,
           corporate, and municipal bonds.
 
         **Example**: In 2023, with rising interest rates and market volatility, some conservative investors
@@ -276,13 +277,13 @@ elif page == "Sample Portfolio":
 
     # Interactive portfolio builder
     st.subheader("Build Your Conservative Portfolio")
-    stocks = st.slider("Stock Allocation (%)", 0, 100, 60)
-    bonds = 100 - stocks
+    bonds = st.slider("Stock Allocation (%)", 0, 100, 60)
+    stocks = 100 - bonds
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3, col4, col5 = st.columns([1, 0.5, 3, 0.5, 1])
     with col1:
         st.metric("Stocks", f"{stocks}%")
-    with col2:
+    with col5:
         st.metric("Bonds", f"{bonds}%")
     
     if st.button("Generate Sample Portfolio"):
