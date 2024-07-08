@@ -8,6 +8,11 @@ import numpy as np
 file_path = 'Actual vs Expected Portofolio Performance July_2024 - Moderate.csv'
 data = pd.read_csv(file_path)
 
+risk_free_rate = 2.0  # 2%
+
+# Calculate Sharpe Ratio for each client
+data['Sharpe Ratio'] = (data['Actual Return '] - risk_free_rate) / data['Actual Return '].std()
+
 # Set the title of the Streamlit app
 st.set_page_config(page_title="Portfolio Performance Visualization", layout="wide")
 st.title('📊 Portfolio Performance Visualization')
@@ -139,6 +144,9 @@ elif page == 'Visualizations':
 # Summary Statistics Page
 elif page == 'Summary Statistics':
     st.header('📊 Summary Statistics')
+    st.subheader('Average Sharpe Ratio')
+    avg_sharpe_ratio = data['Sharpe Ratio'].mean()
+    st.write(f"Average Sharpe Ratio: {avg_sharpe_ratio:.2f}")
 
     # Select columns for analysis
     numeric_columns = data.select_dtypes(include=[np.number]).columns.tolist()
@@ -228,15 +236,17 @@ elif page == 'Client Analysis':
     # Display client information
     st.subheader(f"Client: {client}")
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
         st.metric("Actual Return", f"{client_data['Actual Return ']:.2f}%")  # Note the space after 'Return'
     with col2:
         st.metric("Expected Return", f"{client_data['Expected Return ']:.2f}%")  # Note the space after 'Return'
     with col3:
         st.metric("S&P", f"{client_data['S&P']:.2f}%")
-
-    st.metric("Drift", f"{client_data['Drift']:.2f}%")
+    with col4:
+        st.metric("Drift", f"{client_data['Drift']:.2f}%")
+    with col5:
+            st.metric("Sharpe Ratio", f"{client_data['Sharpe Ratio']:.2f}")
 
     # Asset Allocation
     st.subheader("Asset Allocation")
