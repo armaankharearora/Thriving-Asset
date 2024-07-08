@@ -14,7 +14,7 @@ st.title('📊 Portfolio Performance Visualization')
 
 # Sidebar for navigation
 st.sidebar.title('Navigation')
-page = st.sidebar.radio('Go to', ['Data Table', 'Visualizations', 'Summary Statistics'])
+page = st.sidebar.radio('Go to', ['Data Table', 'Visualizations', 'Summary Statistics', 'Client Analysis'])
 
 # Sidebar for plot selection
 if page == 'Visualizations':
@@ -216,8 +216,74 @@ elif page == 'Summary Statistics':
     else:
         st.warning('Please select at least one column for analysis.')
 
+elif page == 'Client Analysis':
+    st.header('🧑‍💼 Individual Client Analysis')
 
+    # Select a client
+    client = st.selectbox('Select a client:', data['Primary Owner'].unique())
 
+    # Filter data for the selected client
+    client_data = data[data['Primary Owner'] == client].iloc[0]
 
+    # Display client information
+    st.subheader(f"Client: {client}")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Actual Return", f"{client_data['Actual Return ']:.2f}%")  # Note the space after 'Return'
+    with col2:
+        st.metric("Expected Return", f"{client_data['Expected Return ']:.2f}%")  # Note the space after 'Return'
+    with col3:
+        st.metric("S&P", f"{client_data['S&P']:.2f}%")
 
+    st.metric("Drift", f"{client_data['Drift']:.2f}%")
 
+    # Asset Allocation
+    st.subheader("Asset Allocation")
+    
+    asset_allocation = {
+        'Equity': client_data['Equity %'],
+        'Fixed Income': client_data['Fixed Income %'],
+        'Cash': client_data['Cash %']
+    }
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+    fig.suptitle(f'Asset Allocation for {client}', fontsize=16)
+
+    # Pie chart
+    ax1.pie(asset_allocation.values(), labels=asset_allocation.keys(), autopct='%1.1f%%', startangle=90, colors=sns.color_palette("Set2"))
+    ax1.set_title('Pie Chart')
+
+    # Bar chart
+    ax2.bar(asset_allocation.keys(), asset_allocation.values(), color=sns.color_palette("Set2"))
+    ax2.set_title('Bar Chart')
+    ax2.set_ylabel('Percentage')
+    for i, v in enumerate(asset_allocation.values()):
+        ax2.text(i, v, f'{v:.1f}%', ha='center', va='bottom')
+
+    st.pyplot(fig)
+
+    # Performance Comparison
+    st.subheader("Performance Comparison")
+
+    performance_data = {
+        'Actual Return': client_data['Actual Return '],  # Note the space after 'Return'
+        'Expected Return': client_data['Expected Return '],  # Note the space after 'Return'
+        'S&P': client_data['S&P']
+    }
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bars = ax.bar(performance_data.keys(), performance_data.values(), color=sns.color_palette("Set2"))
+    ax.set_title('Performance Comparison')
+    ax.set_ylabel('Percentage')
+
+    for bar in bars:
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2., height,
+                f'{height:.2f}%', ha='center', va='bottom')
+
+    st.pyplot(fig)
+
+    # Display all client data
+    st.subheader("All Client Data")
+    st.write(client_data.to_frame().T)
