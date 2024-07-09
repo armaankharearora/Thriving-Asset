@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import altair as alt
+import pandas as pd
 
 def create_scatter_plot(data):
     st.header('Scatter Plot Analysis')
@@ -105,7 +106,8 @@ def display_client_analysis(data):
     
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        st.metric("Actual Return", f"{client_data['Actual Return ']:.2f}%")
+        st.metric("Actual Return", f"{client_data['Actual Return ']:.2f}%", 
+                  delta=f"{client_data['Actual Return '] - client_data['Expected Return ']:.2f}%")
     with col2:
         st.metric("Expected Return", f"{client_data['Expected Return ']:.2f}%")
     with col3:
@@ -123,39 +125,80 @@ def display_client_analysis(data):
         'Cash': client_data['Cash %']
     }
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
-    fig.suptitle(f'Asset Allocation for {client}', fontsize=16)
+    # Create a DataFrame for the asset allocation
+    asset_df = pd.DataFrame(list(asset_allocation.items()), columns=['Asset', 'Percentage'])
 
-    ax1.pie(asset_allocation.values(), labels=asset_allocation.keys(), autopct='%1.1f%%', startangle=90, colors=sns.color_palette("Set2"))
-    ax1.set_title('Pie Chart')
+    # Pie chart using Altair
+    pie_chart = alt.Chart(asset_df).mark_arc().encode(
+        theta='Percentage',
+        color='Asset',
+        tooltip=['Asset', 'Percentage']
+    ).properties(
+        title='Asset Allocation',
+        width=300,
+        height=300
+    )
 
-    ax2.bar(asset_allocation.keys(), asset_allocation.values(), color=sns.color_palette("Set2"))
-    ax2.set_title('Bar Chart')
-    ax2.set_ylabel('Percentage')
-    for i, v in enumerate(asset_allocation.values()):
-        ax2.text(i, v, f'{v:.1f}%', ha='center', va='bottom')
+    # Bar chart using Altair
+    bar_chart = alt.Chart(asset_df).mark_bar().encode(
+        x='Asset',
+        y='Percentage',
+        color='Asset',
+        tooltip=['Asset', 'Percentage']
+    ).properties(
+        title='Asset Allocation',
+        width=300,
+        height=300
+    )
 
-    st.pyplot(fig)
+    # Display charts side by side
+    st.altair_chart(alt.hconcat(pie_chart, bar_chart))
 
     st.subheader("Performance Comparison")
 
     performance_data = {
-        'Actual Return': client_data['Actual Return '],
-        'Expected Return': client_data['Expected Return '],
-        'S&P': client_data['S&P']
+        'Metric': ['Actual Return', 'Expected Return', 'S&P'],
+        'Value': [client_data['Actual Return '], client_data['Expected Return '], client_data['S&P']]
     }
+    perf_df = pd.DataFrame(performance_data)
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(performance_data.keys(), performance_data.values(), color=sns.color_palette("Set2"))
-    ax.set_title('Performance Comparison')
-    ax.set_ylabel('Percentage')
+    chart = alt.Chart(perf_df).mark_bar().encode(
+        x='Metric',
+        y='Value',
+        color='Metric',
+        tooltip=['Metric', 'Value']
+    ).properties(
+        title='Performance Comparison',
+        width=600,
+        height=400
+    )
 
-    for bar in bars:
-        height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height,
-                f'{height:.2f}%', ha='center', va='bottom')
+    text = chart.mark_text(
+        align='center',
+        baseline='bottom',
+        dy=-5
+    ).encode(
+        text=alt.Text('Value:Q', format='.2f')
+    )
 
-    st.pyplot(fig)
+    st.altair_chart(chart + text)
 
     st.subheader("All Client Data")
-    st.write(client_data.to_frame().T)
+    
+    # Convert the series to a dataframe and transpose it
+    client_df = client_data.to_frame().T
+    
+    # Function to color numeric cells based on their value
+    def color_numeric(val):
+        try:
+            val = float(val)
+            color = f'background-color: rgba(0, 255, 0, {val/100})' if val >= 0 else f'background-color: rgba(255, 0, 0, {-val/100})'
+            return color
+        except:
+            return ''
+
+    # Apply the styling
+    styled_df = client_df.style.applymap(color_numeric)
+
+    # Display the styled dataframe
+    st.dataframe(styled_df)
