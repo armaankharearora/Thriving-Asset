@@ -2,6 +2,7 @@ import streamlit as st
 from data_loader import load_data
 from visualizations import create_scatter_plot, create_bar_plot, create_heatmap, display_client_analysis
 from utils import calculate_sharpe_ratio
+import numpy as np
 
 # Load the data
 data = load_data('Actual vs Expected Portofolio Performance July_2024 - Moderate.csv')
